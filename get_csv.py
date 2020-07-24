@@ -33,7 +33,7 @@ if main_article_block:
     main_article_block_link = main_article_block.find('a').get('href')
 article_links = [link.find("a").get("href") for link in soup.find_all("div", class_="author_page_grid_article")]
 
-with open(settings.output_file, "w") as file:
+with open(settings.output_file, "w", encoding="utf-8") as file:
     if main_article_block_link:
         print("'title', 'text', 'images'", file=file, sep="\n")
         print(get_csv_string(main_article_block_link), file=file, sep="\n")
