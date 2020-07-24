@@ -3,6 +3,7 @@
 ## Установка
 ```
 git clone https://github.com/scherbininvladimir/yvkurse
+cd yvkurse
 pip3 install -r requirements.txt
 ```
 
