@@ -1,10 +1,11 @@
+import re
 import requests
 from bs4 import BeautifulSoup
 
 import settings
 
 
-def get_csv_string(link):
+def get_csv_string(link, file):
     site = settings.url.split('@')[0]
     r = requests.get(site + link)
     soup = BeautifulSoup(r.text, "html.parser")
@@ -13,7 +14,8 @@ def get_csv_string(link):
     article_text = ""
     article_images = ""
     if article_block:
-        article_title = article_block.find("h1").text.strip()
+        if article_block.find("h1"):
+            article_title = article_block.find("h1").text.strip()
         text_blocks = [p for p in article_block.find_all("p")]
         for paragraph in text_blocks:
             article_text = article_text + paragraph.getText()
@@ -22,23 +24,21 @@ def get_csv_string(link):
             if article_images:
                 article_images = article_images + ", "
             article_images = article_images + image
-    return f"'{article_title}', '{article_text}', '{article_images}';"
+    print(f"'{article_title}', '{article_text}', '{article_images}';", file=file, sep="\n")
+    for script in soup.find_all("script"):
+        if re.match(r'.*"next_article_url":"\\(.*)"', str(script)):
+            next_link = re.match(r'.*"next_article_url":"\\(.*)"', str(script)).group(1)
+            get_csv_string(next_link, file)    
+    return
 
+r = requests.get(settings.url)
 
-r = requests.get(settings.url, headers=settings.headers)
 soup = BeautifulSoup(r.text, "html.parser")
-main_article_block = soup.find("div", class_="author_page_block")
+main_article_block = soup.find("div", class_="author-page-article")
 main_article_block_link = ""
 if main_article_block:
     main_article_block_link = main_article_block.find('a').get('href')
-article_links = [link.find("a").get("href") for link in soup.find_all("div", class_="author_page_grid_article")]
 
 with open(settings.output_file, "w", encoding="utf-8") as file:
-    if main_article_block_link:
-        print("'title', 'text', 'images'", file=file, sep="\n")
-        print(get_csv_string(main_article_block_link), file=file, sep="\n")
-        for link in article_links:
-            print(get_csv_string(link), file=file, sep="\n")
-        print(f'Статьи выгружены в {settings.output_file}')
-    else:
-        print("Статьи не найдены")
+    print("'title', 'text', 'images'", file=file, sep="\n")
+    get_csv_string(main_article_block_link, file)
