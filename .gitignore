@@ -1,9 +1,4 @@
 .vscode/settings.json
 __pycache__/
 output.csv
-yvkurse/
-.end
-test_selenium.py
-test.py
-login_vk.py
-chromedriver
+vk_api.py
