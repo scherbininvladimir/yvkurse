@@ -2,7 +2,5 @@
 __pycache__/
 yvkurse/
 output.csv
-test_selenium.py
 .env
 chromedriver
-get_csv_v2.py
