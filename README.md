@@ -9,10 +9,6 @@ pip3 install -r requirements.txt
 ```
 
 ## Настройка
-
-В файле settings.py:
-output_file - файл, в который будут выведены статьи
-
 Нужно создать файл .env с таким содержанием
 ```
 LOGIN="<Ваш логин vk.com>"
